@@ -1,23 +1,25 @@
-import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { createDb } from './index';
+import { migrate } from 'drizzle-orm/libsql/migrator';
 
 // Main migration function
-async function runMigrations() {
+export async function runMigrations(dbUrl?: string) {
   console.log('Running database migrations...');
-  const db = createDb();
+  const db = dbUrl ? createDb(dbUrl) : createDb();
   
   try {
-    migrate(db, { migrationsFolder: './drizzle' });
+    await migrate(db, { migrationsFolder: './drizzle' });
     console.log('Migrations completed successfully');
+    return true;
   } catch (error) {
     console.error('Migration failed:', error);
-    process.exit(1);
+    return false;
   }
 }
 
 // Run migrations when this file is executed directly
 if (require.main === module) {
-  runMigrations();
+  runMigrations().catch(err => {
+    console.error('Migration script failed:', err);
+    process.exit(1);
+  });
 }
-
-export { runMigrations };
