@@ -95,6 +95,12 @@ importers:
 
   packages/gateway:
     dependencies:
+      '@aquila/core':
+        specifier: workspace:*
+        version: link:../core
+      '@aquila/data':
+        specifier: workspace:*
+        version: link:../data
       cors:
         specifier: ^2.8.5
         version: 2.8.5
