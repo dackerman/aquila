@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>interfaces.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<p>Here are the <strong>major system boundaries</strong>, with the key interfaces and data types that cross each:</p>
+
+<hr />
+
+<h2 id="1  ui ↔ gatewaytrpcciteturn2file0">1 UI ↔ Gateway (tRPC) citeturn2file0</h2>
+
+<p><strong>Procedures &amp; Payloads</strong></p>
+
+<ul>
+<li><code>postChat(input: { channel: string; text: string }) → ChatMessage</code></li>
+<li><code>subscribeChat(input: { channel: string }) → stream&lt;ChatMessage&gt;</code></li>
+<li><code>listAgents() → AgentConfig[]</code></li>
+<li><code>createAgent(input: AgentConfig) → AgentConfig</code></li>
+<li><code>listChannels() → Channel[]</code></li>
+</ul>
+
+<p><strong>Core Types</strong></p>
+
+<pre><code class="ts">interface ChatMessage {
+  id: string;
+  agentId: string | 'human';
+  channelId: string;
+  role: 'user'|'assistant'|'tool';
+  content: string;
+  ts: number;
+}
+
+interface AgentConfig {
+  id: string;
+  name: string;
+  model: string;
+  systemPrompt: string;
+  tools: string[];
+  memoryPolicy: string;
+}
+
+interface Channel {
+  id: string;
+  name: string;
+  type: 'public'|'private'|'repo';
+}
+</code></pre>
+
+<hr />
+
+<h2 id="2  gateway → event busnatsin‑memciteturn2file2">2 Gateway → Event Bus (NATS / in‑mem) citeturn2file2</h2>
+
+<p><strong>Published Subjects &amp; Payloads</strong></p>
+
+<ul>
+<li><code>aquila.chat.message</code> → <code>ChatMessageEvent { …same fields as ChatMessage… }</code></li>
+<li><code>aquila.task.created</code> → <code>TaskCreatedEvent { taskId, creatorId, spec: TaskSpec }</code></li>
+<li><code>aquila.job.queued</code> → <code>JobQueuedEvent { jobId, taskId, agentId }</code></li>
+<li><code>aquila.tool.call</code> → <code>ToolCallEvent { callId, agentId, toolId, input }</code></li>
+<li><code>aquila.tool.result</code> → <code>ToolResultEvent { callId, output, cost, duration }</code></li>
+<li><code>aquila.run.finished</code> → <code>RunFinishedEvent { jobId, success, tokens, cost }</code></li>
+</ul>
+
+<hr />
+
+<h2 id="3  orchestrator → bullmqqueue">3 Orchestrator → BullMQ Queue</h2>
+
+<pre><code class="ts">interface JobPayload {
+  jobId:    string;
+  taskId:   string;
+  agentId:  string;
+  spec:     TaskSpec;
+  context:  ChatMessage[];      // assembled snapshot
+}
+</code></pre>
+
+<hr />
+
+<h2 id="4  worker ↔ modeladapter">4 Worker ↔ ModelAdapter</h2>
+
+<pre><code class="ts">// Request
+interface ModelRequest {
+  modelId:   string;
+  prompt:    string;
+  functions?: FunctionSpec[];
+  maxTokens?: number;
+}
+
+// Response
+interface ModelResponse {
+  content:      string;
+  functionCall?: { name: string; arguments: any };
+}
+</code></pre>
+
+<hr />
+
+<h2 id="5  worker ↔ toolclientmcpjson‑rpcciteturn2file2">5 Worker ↔ ToolClient (MCP JSON‑RPC) citeturn2file2</h2>
+
+<pre><code class="jsonc">// Standard JSON‑RPC 2.0 envelope
+{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;:       &quot;&lt;callId&gt;&quot;,
+  &quot;method&quot;:   &quot;&lt;toolId&gt;&quot;,
+  &quot;params&quot;:   { /* tool‐specific input */ }
+}
+// →
+{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;:       &quot;&lt;callId&gt;&quot;,
+  &quot;result&quot;:   { /* tool‐specific output */ }
+}
+</code></pre>
+
+<hr />
+
+<h2 id="6  datalayerdrizzle‑ormsqliteciteturn2file2">6 Data Layer (Drizzle‑ORM / SQLite) citeturn2file2</h2>
+
+<pre><code class="ts">// messages table
+messages: {
+  id:       Text,
+  channel:  Text,
+  author:   Text,
+  role:     Text,
+  content:  Text,
+  ts:       Integer,
+}
+
+// agents table
+agents: {
+  id:            Text,
+  name:          Text,
+  model:         Text,
+  system_prompt: Text,
+  memory_policy: Text,
+}
+
+// tasks, jobs, embeddings similarly defined…
+</code></pre>
+
+<hr />
+
+<h2 id="7  gateway ↔ githubapp">7 Gateway ↔ GitHub App</h2>
+
+<ul>
+<li><strong>Outgoing</strong>:</li>
+</ul>
+
+<pre><code class="```ts">  interface PRCreateRequest {
+    repo: string;
+    branch: string;
+    title: string;
+    body:  string;
+  }
+
+</code></pre>
+
+<ul>
+<li><strong>Incoming Webhook</strong>:</li>
+</ul>
+
+<pre><code class="```ts">  interface PullRequestEvent {
+    action: 'opened'|'reviewed'|'closed';
+    number: number;
+    repo:   { full_name: string };
+    sender: { login: string };
+    // …etc
+  }
+
+</code></pre>
+
+<p>Mapped into <code>aquila.chat.message</code> or <code>aquila.task.created</code>.</p>
+
+<hr />
+
+<h2 id="8  uiadmin ↔ gateway">8 UI Admin ↔ Gateway</h2>
+
+<ul>
+<li><code>subscribeEvents(filter: EventFilter) → stream&lt;EventRecord&gt;</code></li>
+<li><code>getCostMetrics(agentId?: string) → CostSnapshot[]</code></li>
+</ul>
+
+<pre><code class="ts">interface EventRecord {
+  subject: string;  // e.g. 'aquila.tool.call'
+  payload: any;
+  ts:      number;
+}
+
+interface CostSnapshot {
+  agentId: string;
+  tokens:  number;
+  cost:    number;
+  ts:      number;
+}
+</code></pre>
+
+<hr />
+
+<p>Together, these interfaces and types define the <strong>full contract</strong> between UI, API, agents, tool layers, and persistence—ensuring <strong>type safety</strong>, <strong>auditability</strong>, and <strong>testability</strong> across the entire Aquila platform.</p>
+
+</body>
+</html>
