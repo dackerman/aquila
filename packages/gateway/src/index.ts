@@ -4,7 +4,7 @@ import { createDb } from '@aquila/data';
 
 // Initialize Express app
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env['PORT'] ? parseInt(process.env['PORT']) : 3000;
 
 // Initialize database
 const db = createDb();
@@ -19,7 +19,8 @@ app.get('/health', async (_req, res) => {
     // Test database connection
     const result = await db.client.execute('SELECT 1 AS ok');
 
-    if (result.rows[0].ok === 1) {
+    // Ensure we have rows and the ok property exists
+    if (result.rows && result.rows[0] && result.rows[0]['ok'] === 1) {
       res.status(200).json({ status: 'ok', database: 'connected' });
     } else {
       res.status(500).json({ status: 'error', message: 'Database check failed' });
