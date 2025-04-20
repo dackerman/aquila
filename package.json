@@ -5,7 +5,7 @@
   "description": "Multi-agent orchestration platform (Aquila)",
   "scripts": {
     "dev": "pnpm --filter=@aquila/gateway start",
-    "build": "pnpm --filter=@aquila/gateway build",
+    "build": "pnpm -r build",
     "lint": "eslint --ext .ts,.tsx .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
@@ -15,9 +15,7 @@
     "pnpm": ">=8"
   },
   "packageManager": "pnpm@8.15.4",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "devDependencies": {
     "@types/node": "^20.11.19",
     "@typescript-eslint/eslint-plugin": "^7.0.1",

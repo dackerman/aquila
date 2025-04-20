@@ -8,7 +8,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "composite": true,
+    "paths": {
+      "@aquila/core": ["../core/src"],
+      "@aquila/data": ["../data/src"]
+    }
   },
   "include": ["src/**/*"],
   "references": [

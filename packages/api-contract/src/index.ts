@@ -2,7 +2,7 @@ import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
 
 // Define context type that will be used in all procedures
-export interface Context {
+interface TRPCContext {
   user?: {
     id: string;
     name: string;
@@ -10,7 +10,7 @@ export interface Context {
 }
 
 // Initialize tRPC with context type
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<TRPCContext>().create();
 
 // Export base router and procedure builders
 export const router = t.router;
@@ -26,7 +26,7 @@ export const HealthCheckResponseSchema = z.object({
 });
 
 // Export router type for client consumption
-export type { Context };
+export type Context = TRPCContext;
 export type AppRouter = typeof appRouter;
 
 // Export the base router with the health endpoint
