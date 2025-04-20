@@ -8,7 +8,8 @@
     "build": "pnpm -r build",
     "lint": "eslint --ext .ts,.tsx .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "health": "scripts/health-check.sh"
   },
   "engines": {
     "node": ">=18",
