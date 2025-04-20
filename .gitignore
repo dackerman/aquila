@@ -39,3 +39,10 @@ coverage/
 # OS files
 .DS_Store
 Thumbs.db
+ 
+# Agent workspaces
+workspace/
+
+# Next.js build output
+.next/
+out/
