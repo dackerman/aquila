@@ -36,6 +36,19 @@ importers:
         specifier: ^1.2.2
         version: 1.6.1(@types/node@20.17.30)
 
+  packages/agent-runtime:
+    dependencies:
+      '@aquila/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      typescript:
+        specifier: ^5.3.3
+        version: 5.8.3
+      vitest:
+        specifier: ^1.2.2
+        version: 1.6.1(@types/node@20.17.30)
+
   packages/api-contract:
     dependencies:
       '@aquila/core':
@@ -120,6 +133,35 @@ importers:
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@20.17.30)(typescript@5.8.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.8.3
+      vitest:
+        specifier: ^1.2.2
+        version: 1.6.1(@types/node@20.17.30)
+
+  packages/orchestrator:
+    dependencies:
+      '@aquila/core':
+        specifier: workspace:*
+        version: link:../core
+      '@aquila/data':
+        specifier: workspace:*
+        version: link:../data
+    devDependencies:
+      typescript:
+        specifier: ^5.3.3
+        version: 5.8.3
+      vitest:
+        specifier: ^1.2.2
+        version: 1.6.1(@types/node@20.17.30)
+
+  packages/test-kit:
+    dependencies:
+      '@aquila/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
       typescript:
         specifier: ^5.3.3
         version: 5.8.3
