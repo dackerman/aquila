@@ -23,7 +23,7 @@ A self-hosted platform that empowers developers to delegate cognitive work to AI
   orchestrator    // task graph, schedulers, DI container
   agent-runtime   // model adapters, memory manager, tool client
   tools/          // mcp-shell, mcp-git, mcp-fs …
-  ui              // Next.js app, shadcn components, recoil store
+  ui              // Vite + React app for chat interface
   test-kit        // stubs, fake timers, harness
 ```
 
@@ -64,6 +64,18 @@ pnpm lint
 pnpm test
 ```
 
+## Running the UI
+
+To start the UI in development mode:
+
+```bash
+cd packages/ui
+pnpm install
+pnpm dev
+```
+
+The UI will be available at http://localhost:3000
+
 ## API Endpoints
 
 - `GET /health` - Basic health check endpoint
@@ -71,13 +83,18 @@ pnpm test
 
 ## Current Status
 
-This project is in early development. Phase 0 (Monorepo Bootstrap) has been completed:
+This project is in early development. We're currently working on Phase 1 (Chat MVP):
 
-- [x] Init workspace with pnpm mono-repo
-- [x] Set up TypeScript, ESLint, Prettier, Drizzle-ORM, Vitest
-- [x] Create a Gateway skeleton with a /health route
-- [x] Configure SQLite WAL with Drizzle migrations for users and messages tables
-- [x] Add GitHub Actions for CI (type-check and lint)
+- [x] Init workspace with pnpm mono-repo (Phase 0)
+- [x] Set up TypeScript, ESLint, Prettier, Drizzle-ORM, Vitest (Phase 0)
+- [x] Create a Gateway skeleton with a /health route (Phase 0)
+- [x] Configure SQLite WAL with Drizzle migrations for users and messages tables (Phase 0)
+- [x] Add GitHub Actions for CI (type-check and lint) (Phase 0)
+- [x] Create Slack-like Chat UI skeleton (Phase 1)
+- [ ] Add WebSocket transport for real-time updates (Phase 1)
+- [ ] Create channel model with persisted public channel (Phase 1)
+- [ ] Implement single agent loop with echo-bot role (Phase 1)
+- [ ] Add local secrets vault for API keys (Phase 1)
 
 ## License
 
