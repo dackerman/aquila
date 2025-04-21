@@ -67,12 +67,12 @@ export declare const ChannelSchema: z.ZodObject<{
     name: z.ZodString;
     type: z.ZodEnum<["public", "private", "repo"]>;
 }, "strip", z.ZodTypeAny, {
-    type: "public" | "private" | "repo";
     id: string;
+    type: "public" | "private" | "repo";
     name: string;
 }, {
-    type: "public" | "private" | "repo";
     id: string;
+    type: "public" | "private" | "repo";
     name: string;
 }>;
 export type Channel = z.infer<typeof ChannelSchema>;

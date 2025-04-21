@@ -30,5 +30,28 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "vitest": "^1.2.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "ignorePatterns": [
+      "node_modules",
+      "dist",
+      "*.js"
+    ],
+    "rules": {
+      "no-console": "warn"
+    }
   }
 }

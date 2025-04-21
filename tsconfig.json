@@ -24,5 +24,14 @@
     "outDir": "./dist", /* Ensure root tsc command still uses dist */
     "noEmit": true /* Prevent root tsc from outputting files, rely on package-specific builds */
   },
-  "exclude": ["**/node_modules", "**/dist", "**/build"]
+  "exclude": ["**/node_modules", "**/dist", "**/build"],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/data" },
+    { "path": "packages/api-contract" },
+    { "path": "packages/agent-runtime" },
+    { "path": "packages/test-kit" },
+    { "path": "packages/orchestrator" },
+    { "path": "packages/gateway" }
+  ]
 }

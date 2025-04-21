@@ -132,3 +132,7 @@ export declare const messages: import("drizzle-orm/sqlite-core").SQLiteTableWith
     };
     dialect: "sqlite";
 }>;
+export declare const validators: {
+    users: any;
+    messages: any;
+};

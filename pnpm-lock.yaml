@@ -161,6 +161,12 @@ importers:
       '@aquila/core':
         specifier: workspace:*
         version: link:../core
+      '@aquila/data':
+        specifier: workspace:*
+        version: link:../data
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
     devDependencies:
       typescript:
         specifier: ^5.3.3
@@ -3703,6 +3709,11 @@ packages:
   /utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
+    dev: false
+
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
     dev: false
 
   /v8-compile-cache-lib@3.0.1:

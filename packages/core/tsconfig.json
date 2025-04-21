@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "noEmit": false /* Override root config to ensure emission */
+    "noEmit": false
   },
   "include": ["src/**/*"]
 }

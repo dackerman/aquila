@@ -9,6 +9,8 @@
   "include": ["src/**/*"],
   "references": [
     { "path": "../core" },
-    { "path": "../data" }
+    { "path": "../data" },
+    { "path": "../api-contract" },
+    { "path": "../orchestrator" }
   ]
 }
