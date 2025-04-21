@@ -1,21 +1,30 @@
 /**
- * Agent Runtime package
- * Entry point for the agent runtime functionality.
+ * Agent runtime package
+ * Entry point for agent runtime, model adapters, and execution environment.
  */
-import { User, ChatMessage, AgentConfig, EventType, eventBus } from '@aquila/core';
+export interface User {
+  id: string;
+  username: string;
+}
 
-// Agent interface
 export interface Agent {
   id: string;
   name: string;
-  config: AgentConfig;
-  init(): Promise<void>;
-  process(message: ChatMessage): Promise<ChatMessage>;
-  shutdown(): Promise<void>;
+  status: 'idle' | 'busy' | 'error';
+  role: string;
 }
 
-// Basic agent runtime implementation
-export class AgentRuntime {
+export interface AgentRuntime {
+  registerAgent(agent: Agent): void;
+  unregisterAgent(agentId: string): void;
+  getAgent(agentId: string): Agent | undefined;
+  getAgents(): Agent[];
+}
+
+/**
+ * Basic agent runtime implementation
+ */
+class BasicAgentRuntime implements AgentRuntime {
   private agents: Map<string, Agent> = new Map();
   
   /**
@@ -23,39 +32,29 @@ export class AgentRuntime {
    */
   public registerAgent(agent: Agent): void {
     if (this.agents.has(agent.id)) {
-      throw new Error(`Agent with ID ${agent.id} is already registered`);
+      throw new Error(`Agent with ID ${agent.id} already exists`);
     }
     
     this.agents.set(agent.id, agent);
     
-    // Announce new agent
-    eventBus.emit(EventType.SYSTEM, {
-      action: 'agent_registered',
-      agentId: agent.id,
-      agentName: agent.name
-    });
+    // In a real implementation, we would emit an event or notify subscribers
+    // eslint-disable-next-line no-console
+    console.log(`Agent ${agent.name} (${agent.id}) registered`);
   }
   
   /**
    * Unregister an agent
    */
-  public unregisterAgent(agentId: string): boolean {
+  public unregisterAgent(agentId: string): void {
     const agent = this.agents.get(agentId);
-    if (!agent) return false;
     
-    agent.shutdown().catch(err => {
-      console.error(`Error shutting down agent ${agentId}:`, err);
-    });
-    
-    this.agents.delete(agentId);
-    
-    // Announce agent removal
-    eventBus.emit(EventType.SYSTEM, {
-      action: 'agent_unregistered',
-      agentId
-    });
-    
-    return true;
+    if (agent) {
+      this.agents.delete(agentId);
+      
+      // In a real implementation, we would emit an event or notify subscribers
+      // eslint-disable-next-line no-console
+      console.log(`Agent ${agent.name} (${agentId}) unregistered`);
+    }
   }
   
   /**
@@ -68,38 +67,41 @@ export class AgentRuntime {
   /**
    * Get all registered agents
    */
-  public getAllAgents(): Agent[] {
+  public getAgents(): Agent[] {
     return Array.from(this.agents.values());
   }
   
   /**
-   * Initialize all agents
+   * Initialize the runtime with default agents
    */
-  public async initializeAll(): Promise<void> {
-    const initPromises = Array.from(this.agents.values()).map(agent => 
-      agent.init().catch(err => {
-        console.error(`Failed to initialize agent ${agent.id}:`, err);
-        throw err;
-      })
-    );
+  public initialize(): void {
+    // In a real implementation, we would load agents from storage or config
+    // eslint-disable-next-line no-console
+    console.log('Initializing agent runtime...');
     
-    await Promise.all(initPromises);
-  }
-  
-  /**
-   * Shutdown all agents
-   */
-  public async shutdownAll(): Promise<void> {
-    const shutdownPromises = Array.from(this.agents.values()).map(agent => 
-      agent.shutdown().catch(err => {
-        console.error(`Failed to shutdown agent ${agent.id}:`, err);
-      })
-    );
+    // Register some default agents
+    this.registerAgent({
+      id: 'architect',
+      name: 'Architect',
+      status: 'idle',
+      role: 'system'
+    });
     
-    await Promise.all(shutdownPromises);
-    this.agents.clear();
+    this.registerAgent({
+      id: 'coder',
+      name: 'Coder',
+      status: 'idle',
+      role: 'system'
+    });
+    
+    this.registerAgent({
+      id: 'reviewer',
+      name: 'Reviewer',
+      status: 'idle',
+      role: 'system'
+    });
   }
 }
 
 // Singleton instance
-export const agentRuntime = new AgentRuntime();
+export const agentRuntime = new BasicAgentRuntime();

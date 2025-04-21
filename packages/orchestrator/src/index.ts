@@ -43,9 +43,9 @@ export class PriorityTaskScheduler implements TaskScheduler {
   constructor(private maxConcurrentTasks = 5) {
     // Listen for agent events to adjust scheduling
     eventBus.onEvent<Record<string, unknown>>(EventType.SYSTEM, (event) => {
-      const payload = event.payload;
-      if (payload.action === 'agent_unregistered' && typeof payload.agentId === 'string') {
-        this.handleAgentRemoval(payload.agentId);
+      const payload = event.payload as Record<string, unknown>;
+      if (payload['action'] === 'agent_unregistered' && typeof payload['agentId'] === 'string') {
+        this.handleAgentRemoval(payload['agentId']);
       }
     });
   }
@@ -147,7 +147,10 @@ export class PriorityTaskScheduler implements TaskScheduler {
     // Find insertion point based on priority
     let insertIndex = this.queue.length;
     for (let i = 0; i < this.queue.length; i++) {
-      const queuedTask = this.tasks.get(this.queue[i]);
+      const queuedTaskId = this.queue[i];
+      if (!queuedTaskId) continue;
+      
+      const queuedTask = this.tasks.get(queuedTaskId);
       if (queuedTask && task.priority > queuedTask.priority) {
         insertIndex = i;
         break;
@@ -313,6 +316,7 @@ export class Orchestrator {
     
     // Listen for system events
     eventBus.onEvent<Record<string, unknown>>(EventType.SYSTEM, (event) => {
+      // eslint-disable-next-line no-console
       console.log('Orchestrator received system event:', event.subject, event.payload);
     });
   }

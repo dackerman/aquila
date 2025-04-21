@@ -1,17 +1,27 @@
 /**
- * Agent Runtime package
- * Entry point for the agent runtime functionality.
+ * Agent runtime package
+ * Entry point for agent runtime, model adapters, and execution environment.
  */
-import { ChatMessage, AgentConfig } from '@aquila/core';
+export interface User {
+    id: string;
+    username: string;
+}
 export interface Agent {
     id: string;
     name: string;
-    config: AgentConfig;
-    init(): Promise<void>;
-    process(message: ChatMessage): Promise<ChatMessage>;
-    shutdown(): Promise<void>;
+    status: 'idle' | 'busy' | 'error';
+    role: string;
 }
-export declare class AgentRuntime {
+export interface AgentRuntime {
+    registerAgent(agent: Agent): void;
+    unregisterAgent(agentId: string): void;
+    getAgent(agentId: string): Agent | undefined;
+    getAgents(): Agent[];
+}
+/**
+ * Basic agent runtime implementation
+ */
+declare class BasicAgentRuntime implements AgentRuntime {
     private agents;
     /**
      * Register a new agent
@@ -20,7 +30,7 @@ export declare class AgentRuntime {
     /**
      * Unregister an agent
      */
-    unregisterAgent(agentId: string): boolean;
+    unregisterAgent(agentId: string): void;
     /**
      * Get an agent by ID
      */
@@ -28,14 +38,11 @@ export declare class AgentRuntime {
     /**
      * Get all registered agents
      */
-    getAllAgents(): Agent[];
+    getAgents(): Agent[];
     /**
-     * Initialize all agents
+     * Initialize the runtime with default agents
      */
-    initializeAll(): Promise<void>;
-    /**
-     * Shutdown all agents
-     */
-    shutdownAll(): Promise<void>;
+    initialize(): void;
 }
-export declare const agentRuntime: AgentRuntime;
+export declare const agentRuntime: BasicAgentRuntime;
+export {};

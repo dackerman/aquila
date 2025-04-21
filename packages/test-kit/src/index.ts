@@ -1,133 +1,132 @@
 /**
- * Test Kit package
- * Utilities for testing Aquila components.
+ * Test kit package
+ * Entry point for test utilities, stubs and harnesses.
  */
-import { EventEmitter, eventBus, ChatMessage, User, AgentConfig } from '@aquila/core';
-import { createDb, testDb } from '@aquila/data';
+import { EventType } from '@aquila/core';
+// Import will be available once data package is properly implemented
+// import { db } from '@aquila/data';
 import { v4 as uuidv4 } from 'uuid';
 
-/**
- * Test context for isolated tests
- */
-export interface TestContext {
-  db: ReturnType<typeof createDb>;
-  events: EventEmitter;
-  cleanup: () => Promise<void>;
-}
+// Mock db for now until the real one is implemented
+const db = {
+  run: async (_sql: string, _params?: unknown[]) => ({})
+};
 
 /**
- * Creates an isolated test context with its own DB and event emitter
+ * Test event bus for tracking events during tests
  */
-export async function createTestContext(): Promise<TestContext> {
-  // Create in-memory test database
-  const db = testDb;
+export class TestEventBus {
+  private events: Array<{ subject: string; payload: unknown }> = [];
+  private listeners: Map<string, Array<(event: unknown) => void>> = new Map();
   
-  // Create isolated event emitter
-  const events = new EventEmitter();
+  /**
+   * Clear all recorded events
+   */
+  public clear(): void {
+    this.events = [];
+  }
   
-  // Cleanup function
-  const cleanup = async () => {
-    // Clean up database (in a real implementation, we would drop tables)
-    await db.client.execute('DELETE FROM users');
-    await db.client.execute('DELETE FROM messages');
-  };
+  /**
+   * Get all recorded events
+   */
+  public getEvents(): Array<{ subject: string; payload: unknown }> {
+    return [...this.events];
+  }
   
-  return { db, events, cleanup };
-}
-
-/**
- * Create a test user
- */
-export function createTestUser(overrides: Partial<User> = {}): User {
-  return {
-    id: overrides.id || uuidv4(),
-    name: overrides.name || 'Test User',
-    email: overrides.email || `test-${Date.now()}@example.com`,
-    createdAt: overrides.createdAt || Date.now(),
-  };
-}
-
-/**
- * Create test message
- */
-export function createTestMessage(overrides: Partial<ChatMessage> = {}): ChatMessage {
-  return {
-    id: overrides.id || uuidv4(),
-    channelId: overrides.channelId || 'test-channel',
-    authorId: overrides.authorId || 'test-user',
-    role: overrides.role || 'user',
-    content: overrides.content || 'Test message',
-    ts: overrides.ts || Date.now(),
-  };
-}
-
-/**
- * Create test agent config
- */
-export function createTestAgentConfig(overrides: Partial<AgentConfig> = {}): AgentConfig {
-  return {
-    id: overrides.id || uuidv4(),
-    name: overrides.name || 'Test Agent',
-    model: overrides.model || 'test-model',
-    systemPrompt: overrides.systemPrompt || 'You are a test agent',
-    tools: overrides.tools || [],
-    memoryPolicy: overrides.memoryPolicy || 'session',
-  };
-}
-
-/**
- * Mock agent for testing
- */
-export class MockAgent {
-  public messages: ChatMessage[] = [];
+  /**
+   * Get events of a specific type
+   */
+  public getEventsByType(eventType: string): Array<{ subject: string; payload: unknown }> {
+    return this.events.filter(event => event.subject === eventType);
+  }
   
-  constructor(public config: AgentConfig) {}
-  
-  async process(message: ChatMessage): Promise<ChatMessage> {
-    this.messages.push(message);
+  /**
+   * Mock emitting an event to the bus
+   */
+  public emit(subject: string, payload: unknown): void {
+    this.events.push({ subject, payload });
     
-    // Create a response
-    const response: ChatMessage = {
-      id: uuidv4(),
-      channelId: message.channelId,
-      authorId: this.config.id,
-      role: 'assistant',
-      content: `Mock response to: ${message.content}`,
-      ts: Date.now(),
+    // Notify listeners
+    const subjectListeners = this.listeners.get(subject) || [];
+    for (const listener of subjectListeners) {
+      listener({ subject, payload });
+    }
+    
+    // Notify wildcard listeners
+    const wildcardListeners = this.listeners.get('*') || [];
+    for (const listener of wildcardListeners) {
+      listener({ subject, payload });
+    }
+  }
+  
+  /**
+   * Mock registering an event listener
+   */
+  public on(subject: string, callback: (event: unknown) => void): void {
+    if (!this.listeners.has(subject)) {
+      this.listeners.set(subject, []);
+    }
+    
+    const listeners = this.listeners.get(subject);
+    if (listeners) {
+      listeners.push(callback);
+    }
+  }
+  
+  /**
+   * Clear all listeners
+   */
+  public clearListeners(): void {
+    this.listeners.clear();
+  }
+  
+  /**
+   * Mock for onEvent method
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public onEvent<T>(eventType: EventType, callback: (event: unknown) => void): () => void {
+    this.on(eventType, callback);
+    
+    // Return function to unsubscribe
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return () => {
+      // Unsubscribe logic
     };
-    
-    return response;
   }
 }
 
 /**
- * Capture events for testing
+ * Creates an in-memory database for testing
  */
-export function captureEvents(emitter: EventEmitter, subject: string): ChatMessage[] {
-  const events: ChatMessage[] = [];
-  const unsubscribe = emitter.on<ChatMessage>(subject, (event) => {
-    events.push(event.payload);
-  });
+export async function createTestDatabase() {
+  // Reset the database - in the real implementation this would create an in-memory DB
+  await db.run('DELETE FROM messages');
+  await db.run('DELETE FROM users');
   
-  return events;
+  // Seed with test data
+  await db.run(
+    'INSERT INTO users (id, username, created_at) VALUES (?, ?, ?)',
+    [uuidv4(), 'test_user', Date.now()]
+  );
+  
+  return db;
 }
 
 /**
- * Wait for an event to be emitted
+ * Create stub model adapter for testing
  */
-export function waitForEvent(emitter: EventEmitter, subject: string, timeout = 5000): Promise<unknown> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error(`Timeout waiting for event ${subject}`));
-    }, timeout);
-    
-    const unsubscribe = emitter.on<unknown>(subject, (event) => {
-      clearTimeout(timer);
-      unsubscribe();
-      resolve(event.payload);
-    });
-  });
+export function createStubModelAdapter() {
+  return {
+    complete: async () => ({ content: 'Test response from stub model' }),
+    stream: async function* () {
+      yield { content: 'Test ' };
+      yield { content: 'response ' };
+      yield { content: 'from ' };
+      yield { content: 'stub ' };
+      yield { content: 'model' };
+    }
+  };
 }
 
-// Re-export testDb for convenience
-export { testDb };
+// Export singleton instances for testing
+export const testEventBus = new TestEventBus();

@@ -41,12 +41,12 @@ export declare const ErrorEventSchema: z.ZodObject<{
     path: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     errorId: string;
-    path?: string | undefined;
     error?: any;
+    path?: string | undefined;
 }, {
     errorId: string;
-    path?: string | undefined;
     error?: any;
+    path?: string | undefined;
 }>;
 export type ErrorEvent = z.infer<typeof ErrorEventSchema>;
 export type EventHandler<T = unknown> = (event: EventBase<T>) => void | Promise<void>;

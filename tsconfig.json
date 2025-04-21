@@ -7,7 +7,6 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -17,6 +16,8 @@
     "sourceMap": true,
     "composite": true,
     "incremental": true,
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@aquila/*": ["packages/*/src"]

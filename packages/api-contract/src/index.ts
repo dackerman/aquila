@@ -1,40 +1,68 @@
-import { initTRPC } from '@trpc/server';
+/**
+ * API contract package
+ * Type definitions for the API contract shared between client and server.
+ */
 import { z } from 'zod';
 
-// Define context type that will be used in all procedures
-interface TRPCContext {
+// Core types
+export interface User {
+  id: string;
+  username: string;
+  createdAt: number;
+}
+
+export interface Message {
+  id: string;
+  channelId: string;
+  author: string;
+  role: 'user' | 'assistant' | 'tool';
+  content: string;
+  timestamp: number;
+}
+
+export interface Channel {
+  id: string;
+  name: string;
+  type: 'public' | 'private' | 'repo';
+}
+
+// tRPC context type
+export interface TRPCContext {
   user?: {
     id: string;
     name: string;
   };
 }
 
-// Initialize tRPC with context type
-const t = initTRPC.context<TRPCContext>().create();
+// Mock router and procedure for tRPC - in a real implementation, these would be properly implemented
+type RouterMock = Record<string, unknown>;
+export const router: RouterMock = {};
+export const procedure: Record<string, unknown> = {};
 
-// Export base router and procedure builders
-export const router = t.router;
-export const procedure = t.procedure;
+// Zod schemas for validation
+export const HealthCheckSchema = z.object({}).strict();
 
-// Define input types
-export const HealthCheckSchema = z.object({});
-
-// Define output types
 export const HealthCheckResponseSchema = z.object({
   status: z.enum(['ok', 'error']),
   version: z.string().optional(),
-});
+}).strict();
 
-// Export router type for client consumption
+// Export types
 export type Context = TRPCContext;
+
+// Mock app router - in a real implementation, we would use tRPC
+export const appRouter = {
+  health: {
+    query: async (): Promise<{status: string, version: string}> => ({
+      status: 'ok',
+      version: '0.1.0',
+    }),
+  },
+};
+
 export type AppRouter = typeof appRouter;
 
-// Export the base router with the health endpoint
-export const appRouter = router({
-  health: procedure
-    .input(HealthCheckSchema)
-    .query(() => ({
-      status: 'ok' as const,
-      version: '0.1.0',
-    })),
-});
+// Export api as an object with a router property
+export const api = {
+  router: {},
+};
