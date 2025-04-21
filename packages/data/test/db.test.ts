@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll, afterAll } from 'vitest';
-import { createDb } from '../src';
-import { users, messages } from '../src/schema';
+import { createDb } from '../src/index.js';
+import { users, messages } from '../src/schema.js';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 

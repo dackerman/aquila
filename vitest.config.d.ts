@@ -1,2 +1,2 @@
-declare const _default: import("vite", { with: { "resolution-mode": "import" } }).UserConfig;
+declare const _default: import("vite").UserConfig;
 export default _default;

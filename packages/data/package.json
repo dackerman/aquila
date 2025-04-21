@@ -2,15 +2,16 @@
   "name": "@aquila/data",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "vitest run",
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" vitest run",
     "db:generate": "drizzle-kit generate:sqlite",
-    "db:migrate": "node dist/migrate.js",
-    "db:test": "vitest run test/db.test.ts"
+    "db:migrate": "node --experimental-vm-modules dist/migrate.js",
+    "db:test": "NODE_OPTIONS=\"--experimental-vm-modules\" vitest run test/db.test.ts"
   },
   "dependencies": {
     "@aquila/core": "workspace:*",

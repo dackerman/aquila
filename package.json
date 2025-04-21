@@ -2,13 +2,14 @@
   "name": "llm-mux",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Multi-agent orchestration platform (Aquila)",
   "scripts": {
     "dev": "pnpm --filter=@aquila/gateway start",
     "build": "pnpm -r build",
     "lint": "eslint --ext .ts,.tsx .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" vitest run",
     "health": "scripts/health-check.sh"
   },
   "engines": {

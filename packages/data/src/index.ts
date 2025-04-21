@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
-import * as schema from './schema';
+import * as schema from './schema.js';
 
 // Create a libsql client
 export function createDb(
