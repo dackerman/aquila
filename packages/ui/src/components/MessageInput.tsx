@@ -11,6 +11,7 @@ const MessageInput: FC<MessageInputProps> = ({ channelName }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // In a real app, this would send the message to the server
+    // eslint-disable-next-line no-console
     console.log(`Sending message to ${channelName}: ${message}`)
     setMessage('')
   }

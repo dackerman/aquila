@@ -62,6 +62,9 @@ pnpm lint
 
 # Run tests
 pnpm test
+
+# Run just the UI in development mode
+pnpm dev:ui
 ```
 
 ## Running the UI
@@ -72,6 +75,12 @@ To start the UI in development mode:
 cd packages/ui
 pnpm install
 pnpm dev
+```
+
+Or from the project root:
+
+```bash
+pnpm dev:ui
 ```
 
 The UI will be available at http://localhost:3000
