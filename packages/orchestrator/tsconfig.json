@@ -7,9 +7,5 @@
     "composite": true
   },
   "include": ["src/**/*"],
-  "references": [
-    { "path": "../core" },
-    { "path": "../agent-runtime" },
-    { "path": "../data" }
-  ]
+  "references": []
 }

@@ -7,9 +7,12 @@ echo "Cleaning existing build artifacts..."
 find packages -type d -name "dist" -exec rm -rf {} +
 mkdir -p packages/*/dist
 
-# Build using TypeScript project references to respect dependency graph
-echo "Building all packages using project references..."
-npx tsc --build tsconfig.json
+# Use a sequential build approach to ensure dependencies are built first
+echo "Building packages in dependency order..."
+for pkg in core data api-contract agent-runtime test-kit orchestrator gateway; do
+  echo "Building @aquila/$pkg..."
+  (cd packages/$pkg && ../../node_modules/.bin/tsc --outDir dist)
+done
 
 # Clean up any JS files that were generated in src dirs
 echo "Cleaning any misplaced JS files..."

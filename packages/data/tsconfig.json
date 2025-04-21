@@ -6,7 +6,5 @@
     "noEmit": false /* Override root config to ensure emission */
   },
   "include": ["src/**/*"],
-  "references": [
-    { "path": "../core" }
-  ]
+  "references": []
 }

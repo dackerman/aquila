@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ChatMessageSchema } from './types.js';
+import { ChatMessageSchema } from './types';
 
 // Base event interface with generic payload type
 export interface EventBase<T = unknown> {

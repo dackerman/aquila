@@ -1,5 +1,5 @@
 import { text, integer, sqliteTable } from 'drizzle-orm/sqlite-core';
-import { UserSchema, ChatMessageSchema } from '@aquila/core';
+import { User, ChatMessage } from '@aquila/core';
 
 // Users table - based on the schema defined in core
 export const users = sqliteTable('users', {
@@ -19,8 +19,22 @@ export const messages = sqliteTable('messages', {
   ts: integer('ts').notNull(),
 });
 
-// Export Zod schemas from core for validation
+// Export validation helpers
 export const validators = {
-  users: UserSchema,
-  messages: ChatMessageSchema
+  validateUser: (userData: unknown): userData is User => {
+    return !!userData && 
+      typeof userData === 'object' &&
+      'id' in userData &&
+      'name' in userData &&
+      'email' in userData;
+  },
+  validateMessage: (messageData: unknown): messageData is ChatMessage => {
+    return !!messageData && 
+      typeof messageData === 'object' &&
+      'id' in messageData &&
+      'channelId' in messageData &&
+      'authorId' in messageData &&
+      'role' in messageData &&
+      'content' in messageData;
+  }
 };
