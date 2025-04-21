@@ -20,7 +20,9 @@
     "baseUrl": ".",
     "paths": {
       "@aquila/*": ["packages/*/src"]
-    }
+    },
+    "outDir": "./dist", /* Ensure root tsc command still uses dist */
+    "noEmit": true /* Prevent root tsc from outputting files, rely on package-specific builds */
   },
   "exclude": ["**/node_modules", "**/dist", "**/build"]
 }

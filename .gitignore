@@ -7,6 +7,16 @@ dist/
 build/
 *.tsbuildinfo
 
+# Compiled JavaScript files in source directories
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/test/**/*.js
+packages/*/test/**/*.js.map
+
+# Keep config files
+!*.config.js
+!vitest.config.js
+
 # Databases
 *.db
 *.db-shm

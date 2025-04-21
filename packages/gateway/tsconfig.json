@@ -1,19 +1,10 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true,
-    "paths": {
-      "@aquila/core": ["../core/src"],
-      "@aquila/data": ["../data/src"]
-    }
+    "noEmit": false, /* Override root config to ensure emission */
+    "composite": true
   },
   "include": ["src/**/*"],
   "references": [
