@@ -8,9 +8,11 @@
     "dev": "pnpm --filter=@aquila/gateway start",
     "dev:ui": "pnpm --filter=@aquila/ui dev",
     "build": "bash scripts/build.sh",
-    "build:packages": "pnpm -r build",
+    "build:packages": "pnpm -r --filter=!@aquila/ui build",
+    "build:ui": "pnpm --filter=@aquila/ui build",
     "lint": "eslint --ext .ts,.tsx .",
     "typecheck": "tsc --noEmit",
+    "typecheck:ui": "pnpm --filter=@aquila/ui typecheck",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" vitest run",
     "health": "bash scripts/health-check.sh",
     "clean": "bash scripts/clean-js-files.sh"

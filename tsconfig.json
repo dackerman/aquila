@@ -26,5 +26,13 @@
     "noEmit": true /* Prevent root tsc from outputting files, rely on package-specific builds */
   },
   "exclude": ["**/node_modules", "**/dist", "**/build"],
-  "references": []
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/data" },
+    { "path": "./packages/api-contract" },
+    { "path": "./packages/agent-runtime" },
+    { "path": "./packages/gateway" },
+    { "path": "./packages/orchestrator" },
+    { "path": "./packages/test-kit" }
+  ]
 }

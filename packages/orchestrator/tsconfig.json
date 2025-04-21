@@ -1,11 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "noEmit": false, /* Override root config to ensure emission */
-    "composite": true
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": false,
+    "declaration": true
   },
   "include": ["src/**/*"],
-  "references": []
+  "references": [
+    { "path": "../core" },
+    { "path": "../agent-runtime" }
+  ]
 }
